@@ -1,0 +1,18 @@
+#
+# this is your module manifest and used by Titanium
+# during compilation, packaging, distribution, etc.
+#
+version: 3.0.2
+apiversion: 2
+description: Allows facebook integration for Titanium apps
+author: Ping Wang
+license: Apache Public License v2
+copyright: Copyright (c) 2009-2013 by Appcelerator, Inc.
+
+
+# these should not be edited
+name: Facebook
+moduleid: facebook
+guid: e4f7ac61-1ee7-44c5-bc27-fa6876e2dce9
+platform: android
+minsdk: 3.1.0
