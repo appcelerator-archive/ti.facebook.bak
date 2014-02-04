@@ -430,8 +430,12 @@ public class Facebook {
                         extras.getString(Session.WEB_VIEW_FAILING_URL_KEY));
                 listener.onError(error);
             } else {
-                FacebookError error = new FacebookError(exception.getMessage());
-                listener.onFacebookError(error);
+                if (exception.getMessage() != null) {
+                    FacebookError error = new FacebookError(exception.getMessage());
+                    listener.onFacebookError(error);
+                } else {
+                    listener.onCancel();
+                }
             }
         }
     }
