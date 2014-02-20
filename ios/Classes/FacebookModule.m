@@ -96,6 +96,7 @@
 	appid = [[defaults stringForKey:@"FBAppId"] copy];
 	facebook = [[Facebook alloc] initWithAppId:appid urlSchemeSuffix:nil andDelegate:self];
 	
+	facebook = [[Facebook alloc] initWithAppId:appid urlSchemeSuffix:urlSchemeSuffix andDelegate:self];
 	VerboseLog(@"[DEBUG] facebook _restore, uid = %@",uid_);
 	if (uid_)
 	{
@@ -121,6 +122,7 @@
 	RELEASE_TO_NIL(appid);
 	RELEASE_TO_NIL(permissions);
 	RELEASE_TO_NIL(uid);
+	RELEASE_TO_NIL(urlSchemeSuffix);
 	[super dealloc];
 }
 
@@ -161,6 +163,7 @@
 -(void)startup
 {
 	VerboseLog(@"[DEBUG] facebook startup");
+	[facebook setUrlSchemeSuffix:'myappsuffix'];
 	[super startup];
 	TiThreadPerformOnMainThread(^{
 		NSNotificationCenter * nc = [NSNotificationCenter defaultCenter];
@@ -320,6 +323,19 @@ if(![x isKindOfClass:[t class]]){ \
  * JS example:
  *
  * var facebook = require('facebook');
+ * facebook.urlSchemeSuffix = 'myappsuffix';
+ * alert(facebook.urlSchemeSuffix);
+ *
+ */
+-(id)urlSchemeSuffix
+{
+	return urlSchemeSuffix;
+}
+
+/**
+ * JS example:
+ *
+ * var facebook = require('facebook');
  * alert(facebook.forceDialogAuth);
  *
  */
@@ -379,6 +395,21 @@ if(![x isKindOfClass:[t class]]){ \
 {
 	RELEASE_TO_NIL(permissions);
 	permissions = [arg retain];
+}
+
+/**
+ * JS example:
+ *
+ * var facebook = require('facebook');
+ * facebook.urlSchemeSuffix = 'myappsuffix';
+ * alert(facebook.urlSchemeSuffix);
+ *
+ */
+-(void)setUrlSchemeSuffix:(id)arg
+{
+	RELEASE_TO_NIL(urlSchemeSuffix);
+	urlSchemeSuffix = [arg copy];
+	[facebook setUrlSchemeSuffix:urlSchemeSuffix];
 }
 
 /**
