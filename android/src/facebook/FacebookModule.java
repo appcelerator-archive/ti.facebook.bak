@@ -44,6 +44,7 @@ import com.facebook.android.Facebook.DialogListener;
 import com.facebook.android.FacebookError;
 import com.facebook.android.Util;
 import com.facebook.internal.Utility;
+import com.facebook.Settings;
 
 
 @Kroll.module(name="Facebook", id="facebook")
@@ -53,7 +54,7 @@ public class FacebookModule extends KrollModule
 
     @Kroll.constant public static final int BUTTON_STYLE_NORMAL = 0;
     @Kroll.constant public static final int BUTTON_STYLE_WIDE = 1;
-    
+
     public static final String EVENT_LOGIN = "login";
     public static final String EVENT_LOGOUT = "logout";
     public static final String PROPERTY_SUCCESS = "success";
@@ -308,6 +309,22 @@ public class FacebookModule extends KrollModule
 		});
 	}
 
+	@Kroll.method
+	public void publishInstall()
+	{
+		if (appid == null) {
+			Log.w(TAG, "Trying publishInstall without appid. Have you set appid?");
+			return;
+		}
+
+		Context context = TiApplication.getInstance().getApplicationContext();
+
+		Log.d(TAG, " == Facebook publishInstall", Log.DEBUG_MODE);
+		Log.d(TAG, " ==== appid: " + appid, Log.DEBUG_MODE);
+		Log.d(TAG, " ==== context: " + context, Log.DEBUG_MODE);
+		Settings.publishInstallAsync(context, appid);
+	}
+
 	protected void completeLogin()
 	{
 		getFBRunner().request("me", new RequestListener()
@@ -412,7 +429,7 @@ public class FacebookModule extends KrollModule
 				Log.e(TAG, e.getLocalizedMessage(), e);
 			}
 		};
-		
+
 		if (TiApplication.isUIThread()) {
 			facebook.authorize(activity, activitySupport, permissions, activityCode, new LoginDialogListener(), resultHandler);
 		} else {
