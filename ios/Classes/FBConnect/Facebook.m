@@ -6,7 +6,7 @@
  * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
- 
+
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -115,7 +115,7 @@ static NSString *const FBexpirationDatePropertyName = @"expirationDate";
 - (id)initWithAppId:(NSString *)appId
     urlSchemeSuffix:(NSString *)urlSchemeSuffix
         andDelegate:(id<FBSessionDelegate>)delegate {
-    
+
     self = [super init];
     if (self) {
 		appSupportsBackgrounding = ![TiUtils boolValue:@"UIApplicationExitsOnSuspend" properties:[[NSBundle mainBundle] infoDictionary] def:NO];
@@ -123,15 +123,15 @@ static NSString *const FBexpirationDatePropertyName = @"expirationDate";
         _requests = [[NSMutableSet alloc] init];
         _lastAccessTokenUpdate = [[NSDate distantPast] retain];
         _frictionlessRequestSettings = [[FBFrictionlessRequestSettings alloc] init];
-        _tokenCaching = [[FBSessionManualTokenCachingStrategy alloc] init];        
+        _tokenCaching = [[FBSessionManualTokenCachingStrategy alloc] init];
         self.appId = appId;
         self.sessionDelegate = delegate;
         self.urlSchemeSuffix = urlSchemeSuffix;
-        
+
         // observe tokenCaching properties so we can forward KVO
-        [self.tokenCaching addObserver:self 
+        [self.tokenCaching addObserver:self
                             forKeyPath:FBaccessTokenPropertyName
-                               options:NSKeyValueObservingOptionPrior 
+                               options:NSKeyValueObservingOptionPrior
                                context:tokenContext];
         [self.tokenCaching addObserver:self
                             forKeyPath:FBexpirationDatePropertyName
@@ -166,14 +166,14 @@ static NSString *const FBexpirationDatePropertyName = @"expirationDate";
 }
 
 - (void)invalidateSession {
-    
+
     [self.session close];
     [self.tokenCaching clearToken];
-    
+
     [FBSession deleteFacebookCookies];
-    
+
     // setting to nil also terminates any active request for whitelist
-    [_frictionlessRequestSettings updateRecipientCacheWithRecipients:nil]; 
+    [_frictionlessRequestSettings updateRecipientCacheWithRecipients:nil];
 }
 
 #pragma GCC diagnostic push
@@ -193,7 +193,7 @@ static NSString *const FBexpirationDatePropertyName = @"expirationDate";
         [_request removeObserver:self forKeyPath:requestFinishedKeyPath];
         [_requests removeObject:_request];
     }
-    
+
 }
 #pragma GCC diagnostic pop
 
@@ -201,9 +201,9 @@ static NSString *const FBexpirationDatePropertyName = @"expirationDate";
                                     change:(NSDictionary *)change {
     // here we are forwarding KVO notifications from an inner object
     if ([change objectForKey:NSKeyValueChangeNotificationIsPriorKey]) {
-        [self willChangeValueForKey:keyPath];        
-    } else {        
-        [self didChangeValueForKey:keyPath];        
+        [self willChangeValueForKey:keyPath];
+    } else {
+        [self didChangeValueForKey:keyPath];
     }
 }
 
@@ -244,7 +244,7 @@ static NSString *const FBexpirationDatePropertyName = @"expirationDate";
 		NSString *val =
         [[kv objectAtIndex:1]
          stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-        
+
 		[params setObject:val forKey:[kv objectAtIndex:0]];
 	}
     return params;
@@ -256,13 +256,13 @@ static NSString *const FBexpirationDatePropertyName = @"expirationDate";
 
         // invalidate current session and create a new one with the same permissions
         NSArray *permissions = self.session.permissions;
-        [self.session close];    
+        [self.session close];
         self.session = [[[FBSession alloc] initWithAppID:_appId
                                              permissions:permissions
                                          urlSchemeSuffix:_urlSchemeSuffix
                                       tokenCacheStrategy:self.tokenCaching]
                            autorelease];
-    
+
         // get the session into a valid state
         [self.session openWithCompletionHandler:nil];
     }
@@ -303,7 +303,7 @@ static NSString *const FBexpirationDatePropertyName = @"expirationDate";
 NSArray * noniOS6Permissions = nil;
 
 - (void)authorize:(NSArray *)permissions {
-    
+
     // if we already have a session, git rid of it
     [self.session close];
     self.session = nil;
@@ -313,7 +313,7 @@ NSArray * noniOS6Permissions = nil;
                                      urlSchemeSuffix:_urlSchemeSuffix
                                   tokenCacheStrategy:self.tokenCaching]
                     autorelease];
-    
+
 	FBSessionLoginBehavior behavior = FBSessionLoginBehaviorWithFallbackToWebView;
 	bool systemFBSDK = [SLComposeViewController class]!=nil;
 	if (forceDialog) {
@@ -340,7 +340,7 @@ NSArray * noniOS6Permissions = nil;
 			}
 		}
 	}
-	
+
     [self.session openWithBehavior:(FBSessionLoginBehavior)behavior
 				 completionHandler:^(FBSession *session, FBSessionState status, NSError *error) {
         switch (status) {
@@ -350,18 +350,18 @@ NSArray * noniOS6Permissions = nil;
                 break;
             case FBSessionStateClosedLoginFailed:
                 { // prefer to keep decls near to their use
-                    
+
                     // unpack the error code and reason in order to compute cancel bool
                     NSString *errorCode = [[error userInfo] objectForKey:FBErrorLoginFailedOriginalErrorCode];
                     NSString *errorReason = [[error userInfo] objectForKey:FBErrorLoginFailedReason];
                     BOOL userDidCancel = !errorCode && (!errorReason ||
                                                         [errorReason isEqualToString:FBErrorLoginFailedReasonInlineCancelledValue]);
-                    
+
                     // call the legacy session delegate
                     [self fbDialogNotLogin:userDidCancel];
                 }
                 break;
-            // presently extension, log-out and invalidation are being implemented in the Facebook class 
+            // presently extension, log-out and invalidation are being implemented in the Facebook class
             default:
                 break; // so we do nothing in response to those state transitions
         }
@@ -369,7 +369,7 @@ NSArray * noniOS6Permissions = nil;
  }
 
 -(NSString*)accessToken {
-    return self.tokenCaching.accessToken;  
+    return self.tokenCaching.accessToken;
 }
 
 -(void)setAccessToken:(NSString *)accessToken {
@@ -428,7 +428,7 @@ NSArray * noniOS6Permissions = nil;
                                                    fromDate:_lastAccessTokenUpdate
                                                      toDate:[NSDate date]
                                                     options:0];
-        
+
         if (components.hour >= kTokenExtendThreshold) {
             return YES;
         }
@@ -468,7 +468,7 @@ NSArray * noniOS6Permissions = nil;
  */
 - (void)logout {
     [self invalidateSession];
-    
+
     if ([self.sessionDelegate respondsToSelector:@selector(fbDidLogout)]) {
         [self.sessionDelegate fbDidLogout];
     }
@@ -512,10 +512,10 @@ NSArray * noniOS6Permissions = nil;
         NSLog(@"API Method must be specified");
         return nil;
     }
-    
+
     NSString * methodName = [params objectForKey:@"method"];
     [params removeObjectForKey:@"method"];
-    
+
     return [self requestWithMethodName:methodName
                              andParams:params
                          andHttpMethod:@"GET"
@@ -578,7 +578,7 @@ NSArray * noniOS6Permissions = nil;
  */
 - (FBRequest*)requestWithGraphPath:(NSString *)graphPath
                        andDelegate:(id <FBRequestDelegate>)delegate {
-    
+
     return [self requestWithGraphPath:graphPath
                             andParams:[NSMutableDictionary dictionary]
                         andHttpMethod:@"GET"
@@ -610,7 +610,7 @@ NSArray * noniOS6Permissions = nil;
 - (FBRequest*)requestWithGraphPath:(NSString *)graphPath
                          andParams:(NSMutableDictionary *)params
                        andDelegate:(id <FBRequestDelegate>)delegate {
-    
+
     return [self requestWithGraphPath:graphPath
                             andParams:params
                         andHttpMethod:@"GET"
@@ -694,14 +694,14 @@ NSArray * noniOS6Permissions = nil;
 - (void)dialog:(NSString *)action
      andParams:(NSMutableDictionary *)params
    andDelegate:(id <FBDialogDelegate>)delegate {
-    
+
     [_fbDialog release];
-    
+
     NSString *dialogURL = [kDialogBaseURL stringByAppendingString:action];
     [params setObject:@"touch" forKey:@"display"];
     [params setObject:kSDKVersion forKey:@"sdk"];
     [params setObject:kRedirectURL forKey:@"redirect_uri"];
-    
+
     if ([action isEqualToString:kLogin]) {
         [params setObject:@"user_agent" forKey:@"type"];
         _fbDialog = [[FBLoginDialog alloc] initWithURL:dialogURL loginParams:params delegate:self];
@@ -712,21 +712,21 @@ NSArray * noniOS6Permissions = nil;
                       forKey:@"access_token"];
             [self extendAccessTokenIfNeeded];
         }
-        
+
         // by default we show dialogs, frictionless cases may have a hidden view
         BOOL invisible = NO;
-        
+
         // frictionless handling for application requests
-        if ([action isEqualToString:kApprequests]) {        
+        if ([action isEqualToString:kApprequests]) {
             // if frictionless requests are enabled
             if (self.isFrictionlessRequestsEnabled) {
                 //  1. show the "Don't show this again for these friends" checkbox
                 //  2. if the developer is sending a targeted request, then skip the loading screen
-                [params setValue:@"1" forKey:@"frictionless"];	
+                [params setValue:@"1" forKey:@"frictionless"];
                 //  3. request the frictionless recipient list encoded in the success url
                 [params setValue:@"1" forKey:@"get_frictionless_recipients"];
             }
-            
+
             // set invisible if all recipients are enabled for frictionless requests
             id fbid = [params objectForKey:@"to"];
             if (fbid != nil) {
@@ -736,18 +736,18 @@ NSArray * noniOS6Permissions = nil;
                 if (![fbids isKindOfClass:[NSArray class]]) {
                     // otherwise seperate by commas (handles the singleton case too)
                     fbids = [fbid componentsSeparatedByString:@","];
-                }                
-                invisible = [self isFrictionlessEnabledForRecipients:fbids];             
+                }
+                invisible = [self isFrictionlessEnabledForRecipients:fbids];
             }
         }
-        
+
         _fbDialog = [[FBDialog alloc] initWithURL:dialogURL
                                            params:params
                                   isViewInvisible:invisible
-                             frictionlessSettings:_frictionlessRequestSettings 
+                             frictionlessSettings:_frictionlessRequestSettings
                                          delegate:delegate];
     }
-    
+
     [_fbDialog show];
 }
 
@@ -777,7 +777,7 @@ NSArray * noniOS6Permissions = nil;
 - (BOOL)isSessionValid {
     return (self.accessToken != nil && self.expirationDate != nil
             && NSOrderedDescending == [self.expirationDate compare:[NSDate date]]);
-    
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -792,7 +792,7 @@ NSArray * noniOS6Permissions = nil;
     [self reloadFrictionlessRecipientCache];
     if ([self.sessionDelegate respondsToSelector:@selector(fbDidLogin)]) {
         [self.sessionDelegate fbDidLogin];
-    }    
+    }
 }
 
 /**
@@ -817,13 +817,13 @@ NSArray * noniOS6Permissions = nil;
     _requestExtendingAccessToken = nil;
     NSString* accessToken = [result objectForKey:@"access_token"];
     NSString* expTime = [result objectForKey:@"expires_at"];
-    
+
     if (accessToken == nil || expTime == nil) {
         return;
     }
-    
+
     self.accessToken = accessToken;
-    
+
     NSTimeInterval timeInterval = [expTime doubleValue];
     NSDate *expirationDate = [NSDate distantFuture];
     if (timeInterval != 0) {
@@ -832,9 +832,9 @@ NSArray * noniOS6Permissions = nil;
     self.expirationDate = expirationDate;
     [_lastAccessTokenUpdate release];
     _lastAccessTokenUpdate = [[NSDate date] retain];
-    
+
     [self updateSessionIfTokenUpdated];
-    
+
     if ([self.sessionDelegate respondsToSelector:@selector(fbDidExtendToken:expiresAt:)]) {
         [self.sessionDelegate fbDidExtendToken:accessToken expiresAt:expirationDate];
     }
@@ -850,7 +850,7 @@ NSArray * noniOS6Permissions = nil;
 }
 
 + (BOOL)automaticallyNotifiesObserversForKey:(NSString *)key {
-    // these properties must manually notify for KVO    
+    // these properties must manually notify for KVO
     if ([key isEqualToString:FBaccessTokenPropertyName] ||
         [key isEqualToString:FBexpirationDatePropertyName]) {
         return NO;

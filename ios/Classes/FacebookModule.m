@@ -50,27 +50,27 @@
 	} else {
 		[defaults removeObjectForKey:@"FBUserId"];
 	}
-	
+
 	NSString *access_token = facebook.accessToken;
 	if ((access_token != (NSString *) [NSNull null]) && (access_token.length > 0)) {
 		[defaults setObject:access_token forKey:@"FBAccessToken"];
 	} else {
 		[defaults removeObjectForKey:@"FBAccessToken"];
 	}
-	
+
 	NSDate *expirationDate = facebook.expirationDate;
 	if (expirationDate) {
 		[defaults setObject:expirationDate forKey:@"FBSessionExpires"];
 	} else {
 		[defaults removeObjectForKey:@"FBSessionExpires"];
 	}
-	
+
 	if (appid) {
 		[defaults setObject:appid forKey:@"FBAppId"];
 	}else {
 		[defaults removeObjectForKey:@"FBAppId"];
 	}
-	
+
 	[defaults synchronize];
 }
 
@@ -94,9 +94,8 @@
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 	NSString *uid_ = [defaults objectForKey:@"FBUserId"];
 	appid = [[defaults stringForKey:@"FBAppId"] copy];
-	facebook = [[Facebook alloc] initWithAppId:appid urlSchemeSuffix:nil andDelegate:self];
-	
 	facebook = [[Facebook alloc] initWithAppId:appid urlSchemeSuffix:urlSchemeSuffix andDelegate:self];
+
 	VerboseLog(@"[DEBUG] facebook _restore, uid = %@",uid_);
 	if (uid_)
 	{
@@ -151,7 +150,7 @@
 -(void)resumed:(id)note
 {
 	VerboseLog(@"[DEBUG] facebook resumed");
-	
+
 	[self handleRelaunch];
 }
 
@@ -177,7 +176,7 @@
 -(void)shutdown:(id)sender
 {
 	VerboseLog(@"[DEBUG] facebook shutdown");
-	
+
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	[super shutdown:sender];
 }
@@ -195,7 +194,7 @@
 	for (NSString *key in [params allKeys])
 	{
 		id param = [params objectForKey:key];
-		
+
 		// convert to blob
 		if ([param isKindOfClass:[TiFile class]])
 		{
@@ -210,7 +209,7 @@
 				param = [[[TiBlob alloc] initWithData:[NSData data] mimetype:@"text/plain"] autorelease];
 			}
 		}
-		
+
 		// this is an attachment, we need to convert to POST and switch to blob
 		if ([param isKindOfClass:[TiBlob class]])
 		{
@@ -341,7 +340,7 @@ if(![x isKindOfClass:[t class]]){ \
  */
 -(id)forceDialogAuth
 {
-    return [NSNumber numberWithBool:forceDialogAuth];
+	return [NSNumber numberWithBool:forceDialogAuth];
 }
 
 /**
@@ -422,7 +421,7 @@ if(![x isKindOfClass:[t class]]){ \
  */
 -(void)setForceDialogAuth:(id)arg
 {
-    forceDialogAuth = [TiUtils boolValue:arg def:NO];
+	forceDialogAuth = [TiUtils boolValue:arg def:NO];
 }
 
 /**
@@ -454,22 +453,22 @@ if(![x isKindOfClass:[t class]]){ \
 -(void)authorize:(id)args
 {
 	VerboseLog(@"[DEBUG] facebook authorize");
-	
+
 	if ([self isLoggedIn])
 	{
 		// if already authorized, this should do nothing
 		return;
 	}
-	
+
 	if (appid==nil)
 	{
 		[self throwException:@"missing appid" subreason:nil location:CODELOCATION];
 	}
-	
+
 	TiThreadPerformOnMainThread(^{
 		// forget in case it fails
 		[self _unsave];
-		
+
 		NSArray *permissions_ = permissions == nil ? [NSArray array] : permissions;
 		[facebook setForceDialog:forceDialogAuth];
 		[facebook authorize:permissions_];
@@ -493,24 +492,24 @@ if(![x isKindOfClass:[t class]]){ \
 -(void)reauthorize:(id)args
 {
 	ENSURE_ARG_COUNT(args, 3);
-	
+
 	if (![self isLoggedIn])
 	{
 		[self throwException:@"NotAuthorized" subreason:@"App tried to reauthorize before being logged in." location:CODELOCATION];
 		return;
 	}
-	
+
 	NSArray * writePermissions = [args objectAtIndex:0];
 	NSString * audienceString = [TiUtils stringValue:[args objectAtIndex:1]];
 	KrollCallback * callback = [args objectAtIndex:2];
-	
+
 	FACEBOOK_ENSURE_TYPE(writePermissions, NSArray, @"an array");
 	FACEBOOK_ENSURE_TYPE(audienceString, NSString, @"a string");
 	FACEBOOK_ENSURE_TYPE(callback, KrollCallback, @"a function");
-	
+
 	FBSessionLoginBehavior behavior = FBSessionLoginBehaviorUseSystemAccountIfPresent;
 	FBSessionDefaultAudience audience = FBSessionDefaultAudienceEveryone;
-	
+
 	FBSessionReauthorizeResultHandler handler= ^(FBSession *session, NSError *error)
 	{
 		bool success = (error == nil);
@@ -534,18 +533,18 @@ if(![x isKindOfClass:[t class]]){ \
 				errorString = [errorString stringByAppendingFormat:@" %@",userInfoMessage];
 			}
 		}
-		
+
 		NSNumber * errorCode = [NSNumber numberWithInteger:code];
 		NSDictionary * propertiesDict = [[NSDictionary alloc] initWithObjectsAndKeys:
 										 [NSNumber numberWithBool:success],@"success",
 										 errorCode,@"code", errorString,@"error", nil];
-		
+
 		KrollEvent * invocationEvent = [[KrollEvent alloc] initWithCallback:callback eventObject:propertiesDict thisObject:self];
 		[[callback context] enqueue:invocationEvent];
 		[invocationEvent release];
 		[propertiesDict release];
 	};
-	
+
 	TiThreadPerformOnMainThread(^{
 		[[facebook session] reauthorizeWithPublishPermissions:writePermissions
 											  defaultAudience:audience
@@ -587,21 +586,21 @@ if(![x isKindOfClass:[t class]]){ \
 -(void)requestWithGraphPath:(id)args
 {
 	VerboseLog(@"[DEBUG] facebook requestWithGraphPath");
-	
+
 	ENSURE_ARG_COUNT(args,4);
-	
+
 	NSString* path = [args objectAtIndex:0];
 	NSMutableDictionary* params = [args objectAtIndex:1];
 	NSString* httpMethod = [args objectAtIndex:2];
 	KrollCallback* callback = [args objectAtIndex:3];
-	
+
 	FACEBOOK_ENSURE_TYPE(path, NSString, @"a string");
 	FACEBOOK_ENSURE_TYPE(params, NSDictionary, @"an object");
 	FACEBOOK_ENSURE_TYPE(httpMethod, NSString, @"a string");
 	FACEBOOK_ENSURE_TYPE(callback, KrollCallback, @"a function");
-	
+
 	[self convertParams:params];
-	
+
 	TiThreadPerformOnMainThread(^{
 		TiFacebookRequest* delegate = [[[TiFacebookRequest alloc] initWithPath:path callback:callback module:self graph:YES] autorelease];
 		[facebook requestWithGraphPath:path andParams:params andHttpMethod:httpMethod andDelegate:delegate];
@@ -626,9 +625,9 @@ if(![x isKindOfClass:[t class]]){ \
 -(void)request:(id)args
 {
 	VerboseLog(@"[DEBUG] facebook request");
-	
+
 	ENSURE_ARG_COUNT(args,3);
-	
+
 	NSString* method = [args objectAtIndex:0];
 	NSMutableDictionary* params = [args objectAtIndex:1];
 	KrollCallback* callback = [args objectAtIndex:2];
@@ -642,7 +641,7 @@ if(![x isKindOfClass:[t class]]){ \
 	if (changedHttpMethod != nil) {
 		httpMethod = changedHttpMethod;
 	}
-	
+
 	TiThreadPerformOnMainThread(^{
 		TiFacebookRequest* delegate = [[[TiFacebookRequest alloc] initWithPath:method callback:callback module:self graph:NO] autorelease];
 		[facebook requestWithMethodName:method andParams:params andHttpMethod:httpMethod andDelegate:delegate];
@@ -663,19 +662,19 @@ if(![x isKindOfClass:[t class]]){ \
 -(void)dialog:(id)args
 {
 	ENSURE_ARG_COUNT(args,3);
-	
+
 	VerboseLog(@"[DEBUG] facebook dialog");
-	
+
 	NSString* action = [args objectAtIndex:0];
 	NSMutableDictionary* params = [args objectAtIndex:1];
 	KrollCallback* callback = [args objectAtIndex:2];
-	
+
 	FACEBOOK_ENSURE_TYPE(action, NSString, @"a string");
 	FACEBOOK_ENSURE_TYPE(params, NSDictionary, @"an object");
 	FACEBOOK_ENSURE_TYPE(callback, KrollCallback, @"a function");
-	
+
 	[self convertParams:params];
-	
+
 	TiThreadPerformOnMainThread(^{
 		TiFacebookDialogRequest *delegate = [[[TiFacebookDialogRequest alloc] initWithCallback:callback module:self] autorelease];
 		[facebook dialog:action andParams:params andDelegate:delegate];
@@ -738,7 +737,7 @@ if(![x isKindOfClass:[t class]]){ \
 		{
 			errorString = [errorString stringByAppendingFormat:@" %@",userInfoMessage];
 		}
-		
+
 		if (errorString != nil) {
 			[event setObject:errorString forKey:@"error"];
 		}
@@ -768,7 +767,7 @@ if(![x isKindOfClass:[t class]]){ \
 - (void)fbDidLogin
 {
 	VerboseLog(@"[DEBUG] facebook fbDidLogin");
-	
+
 	[facebook requestWithGraphPath:@"me" andDelegate:self];
 }
 
@@ -789,7 +788,7 @@ if(![x isKindOfClass:[t class]]){ \
 - (void)fbDidLogout
 {
 	VerboseLog(@"[DEBUG] facebook fbDidLogout");
-	
+
 	loggedIn = NO;
 	[self _unsave];
 	[self fireLoginChange];
@@ -825,7 +824,7 @@ if(![x isKindOfClass:[t class]]){ \
 - (void)request:(FBRequest*)request didLoad:(id)result
 {
 	VerboseLog(@"[DEBUG] facebook didLoad");
-	
+
 	RELEASE_TO_NIL(uid);
 	uid = [[result objectForKey:@"id"] copy];
 	[self _save];
@@ -838,7 +837,7 @@ if(![x isKindOfClass:[t class]]){ \
 - (void)request:(FBRequest*)request didFailWithError:(NSError*)error
 {
 	VerboseLog(@"[DEBUG] facebook didFailWithError: %@",error);
-	
+
 	RELEASE_TO_NIL(uid);
 	loggedIn = NO;
 	[self fireLoginChange];
