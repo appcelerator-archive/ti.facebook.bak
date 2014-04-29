@@ -10,8 +10,8 @@
 //
 // How to add a Framework (example)
 //
-// OTHER_LDFLAGS=$(inherited) -framework Foo
-OTHER_LDFLAGS=$(inherited) -weak_framework AdSupport -weak_framework Accounts -weak_framework Social
+// OTHER_LDFLAGS=$(inherited) -framework Foo -weak_framework AdSupport
+OTHER_LDFLAGS=$(inherited) -weak_framework Accounts -weak_framework Social
 //
 // Adding a framework for a specific version(s) of iPhone:
 //
