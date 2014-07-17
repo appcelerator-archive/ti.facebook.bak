@@ -157,6 +157,32 @@ description: |
     method will work even without iOS 6 support. For more details about iOS 6, see the
     [official Facebook iOS 6 documentation](http://developers.facebook.com/docs/howtos/ios-6/).
 
+    #### Submitting an iOS Application to the iTunes Store
+
+    When including the Facebook module in an iOS project and built for the iTunes Store, during the
+    validation process you may receive an error message referring to an Improper Advertising identifier
+    [IDFA] Usage.
+
+    As part of the Apple review process when submitting an application, you will be asked if your app
+    uses the Advertising Identifier (IDFA). Please check "Yes". You will then be asked how your app
+    makes use of it. The question will take this form:
+
+        This app uses the Advertising Identifier to (select all that apply)?
+        - Serve advertisements within the app
+        - Attribute this app installation to a previously served advertisement
+        - Attribute an action taken within this app to a previously served advertisement
+
+    Select the second and third options.
+
+    You will also be asked to check a box to confirm that your app honors a user's Limit Ad Tracking
+    setting in iOS. The Facebook SDK honors the iOS Limited Ad Tracking Setting. When a person enables
+    Limited Ad Tracking, Facebook only uses data obtained through the use of the Advertising Identifier
+    for "Limited Advertising Purposes" as defined by the iOS Developer Program License Agreement. Please
+    make sure to check this box when prompted.
+
+    For more information, see [Facebook Issue #242477629268301](https://developers.facebook.com/bugs/242477629268301/)
+    and [TIMODOPEN-391](https://jira.appcelerator.org/browse/TIMODOPEN-391).
+
 extends: Titanium.Module
 since: "3.1.0"
 platforms: [android, iphone, ipad]
