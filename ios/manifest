@@ -2,7 +2,7 @@
 # this is your module manifest and used by Titanium
 # during compilation, packaging, distribution, etc.
 #
-version: 3.1.1
+version: 3.1.2
 apiversion: 2
 description: Allows facebook integration for Titanium apps, including iOS 6's social frameworks
 author: Blain Hamon

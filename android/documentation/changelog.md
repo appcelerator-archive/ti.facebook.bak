@@ -1,5 +1,7 @@
 # Change Log
 <pre>
+v3.0.3 Adding publishInstall method. [TIMODOPEN-246]
+
 v3.0.2 Force the authorize method to run on the main thread. [TIMOB-15770]
 
 v3.0.1 Fixed a bug in Facebook Android SDK 3.0 that when the user cancels the login

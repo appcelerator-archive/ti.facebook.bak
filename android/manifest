@@ -2,7 +2,7 @@
 # this is your module manifest and used by Titanium
 # during compilation, packaging, distribution, etc.
 #
-version: 3.0.2
+version: 3.0.3
 apiversion: 2
 description: Allows facebook integration for Titanium apps
 author: Ping Wang

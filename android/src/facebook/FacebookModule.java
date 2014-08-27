@@ -313,15 +313,11 @@ public class FacebookModule extends KrollModule
 	public void publishInstall()
 	{
 		if (appid == null) {
-			Log.w(TAG, "Trying publishInstall without appid. Have you set appid?");
+			Log.w(TAG, "Trying publishInstall without appid.  Have you set appid?");
 			return;
 		}
 
 		Context context = TiApplication.getInstance().getApplicationContext();
-
-		Log.d(TAG, " == Facebook publishInstall", Log.DEBUG_MODE);
-		Log.d(TAG, " ==== appid: " + appid, Log.DEBUG_MODE);
-		Log.d(TAG, " ==== context: " + context, Log.DEBUG_MODE);
 		Settings.publishInstallAsync(context, appid);
 	}
 

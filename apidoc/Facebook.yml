@@ -299,6 +299,13 @@ methods:
         summary: Callback to invoke when the request completes.
         type: Callback<FacebookReauthResponse>
 
+  - name: publishInstall
+    since: "3.4.1"
+    summary: |
+        Manually publish an attributed install to the facebook graph.  
+    description: |
+        Be sure to set your [appid](Modules.Facebook.appid) before calling `publishInstall`.
+
 events:
 
   - name: login
