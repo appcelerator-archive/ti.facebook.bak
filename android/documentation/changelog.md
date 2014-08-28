@@ -1,5 +1,7 @@
 # Change Log
 <pre>
+v3.0.3 Built with SDK 3.4.0 to fix a bug on Android L. [TIMOB-17478]
+
 v3.0.2 Force the authorize method to run on the main thread. [TIMOB-15770]
 
 v3.0.1 Fixed a bug in Facebook Android SDK 3.0 that when the user cancels the login
