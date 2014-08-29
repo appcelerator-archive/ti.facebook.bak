@@ -1,6 +1,7 @@
 # Change Log
 <pre>
 v3.0.3 Adding publishInstall method. [TIMODOPEN-246]
+       Built with SDK 3.4.0 to fix a bug on Android L. [TIMOB-17478]
 
 v3.0.2 Force the authorize method to run on the main thread. [TIMOB-15770]
 
