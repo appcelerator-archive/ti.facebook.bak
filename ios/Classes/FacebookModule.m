@@ -664,6 +664,26 @@ if(![x isKindOfClass:[t class]]){ \
 	return [[[TiFacebookLoginButtonProxy alloc] _initWithPageContext:[self executionContext] args:args module:self] autorelease];
 }
 
+/**
+ * JS example:
+ *
+ * var facebook = require('facebook');
+ * facebook.appid = '1234';
+ * facebook.publishInstall();
+ *
+ */
+-(void)publishInstall:(id)args
+{
+	VerboseLog(@"[DEBUG] facebook publishInstall");
+		
+	if (appid==nil)
+	{
+		[self throwException:@"missing appid" subreason:nil location:CODELOCATION];
+	}
+	
+	[FBSettings publishInstall:appid];
+}
+
 #pragma mark Listener work
 
 -(void)fireLoginChange
