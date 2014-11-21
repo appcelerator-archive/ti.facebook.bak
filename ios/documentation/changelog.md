@@ -1,6 +1,7 @@
 # Change Log
 <pre>
-v3.2.0 [TIMOB-17928] Updated to build for 64-bit
+v3.2.0 Updated to build for 64-bit [TIMOB-17928]
+       Adding architectures to manifest [TIMOB-18065]
 
 v3.1.2 Adding publishInstall method. [TIMODOPEN-246]
 
