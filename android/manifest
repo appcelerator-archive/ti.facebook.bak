@@ -4,6 +4,7 @@
 #
 version: 3.0.3
 apiversion: 2
+architectures: armeabi armeabi-v7a x86
 description: Allows facebook integration for Titanium apps
 author: Ping Wang
 license: Apache Public License v2
